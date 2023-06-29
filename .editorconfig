@@ -1,0 +1,6 @@
+root = true
+
+
+[*.{java,kt,kts,xml,xsd}]
+indent_style = tab
+indent_size = 4
