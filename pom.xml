@@ -140,6 +140,7 @@
 
     <modules>
         <module>tl-excel</module>
-    </modules>
+		<module>tl-core</module>
+	</modules>
 
 </project>

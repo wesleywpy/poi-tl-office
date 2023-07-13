@@ -1,5 +1,6 @@
 package com.tl.excel;
 
+import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -7,6 +8,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * ExcelTemplate
@@ -62,14 +64,13 @@ public class ExcelTemplate {
 				template.config = config;
 				return template;
 			}
-			throw new IllegalArgumentException();
+			throw new TLException("ExcelTemplate only supports .xlsx or .xlsm format");
 		} catch (IOException e) {
-			throw new IllegalArgumentException();
+			throw new TLException(e.getMessage(), e);
 		}
-//		try {
-//			return compile(new FileInputStream(templateFile), config);
-//		} catch (FileNotFoundException e) {
-//			throw new ResolverException("Cannot find the file [" + templateFile.getPath() + "]", e);
-//		}
+	}
+
+	public List<ExcelField> resolve() {
+		return null;
 	}
 }

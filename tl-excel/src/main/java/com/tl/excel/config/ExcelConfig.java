@@ -4,7 +4,7 @@ package com.tl.excel.config;
  * XSSFConfig
  *
  * @author Wesley
- * @since 2023/07/12 09:43
+ * @since 2023/07/12
  */
 public class ExcelConfig {
 
