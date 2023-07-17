@@ -2,6 +2,8 @@ package com.tl.excel;
 
 import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
+import com.tl.excel.render.ExcelResolver;
+import com.tl.excel.resolver.ExcelField;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -21,8 +23,11 @@ public class ExcelTemplate {
 	private ExcelConfig config;
 	private final XSSFWorkbook workbook;
 
+	private final ExcelResolver resolver;
+
 	public ExcelTemplate(XSSFWorkbook workbook) {
 		this.workbook = workbook;
+		resolver = new ExcelResolver();
 	}
 
 	/**
@@ -70,7 +75,14 @@ public class ExcelTemplate {
 		}
 	}
 
+	/**
+	 * 解析出模板中配置的字段
+	 *
+	 * @return java.util.List<com.tl.excel.resolver.ExcelField>
+	 * @author Wesley
+	 * @since 2023/07/17
+	 **/
 	public List<ExcelField> resolve() {
-		return null;
+		return this.resolver.resolve(this.workbook);
 	}
 }
