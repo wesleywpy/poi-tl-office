@@ -16,18 +16,17 @@ import java.util.List;
  * ExcelTemplate
  * 模板对象
  * @author Wesley
- * @since 2023/07/10 10:28
+ * @since 2023/07/10
  */
 public class ExcelTemplate {
 
 	private ExcelConfig config;
 	private final XSSFWorkbook workbook;
 
-	private final ExcelResolver resolver;
+	private ExcelResolver resolver;
 
 	public ExcelTemplate(XSSFWorkbook workbook) {
 		this.workbook = workbook;
-		resolver = new ExcelResolver();
 	}
 
 	/**
@@ -67,6 +66,7 @@ public class ExcelTemplate {
 				XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
 				ExcelTemplate template = new ExcelTemplate(xssfWorkbook);
 				template.config = config;
+				template.resolver = new ExcelResolver(config);
 				return template;
 			}
 			throw new TLException("ExcelTemplate only supports .xlsx or .xlsm format");

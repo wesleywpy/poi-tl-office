@@ -3,8 +3,8 @@ package com.tl.core;
 /**
  * Resolver
  *
- * @author WangPanYong
- * @since 2023/07/17 16:27
+ * @author Wesley
+ * @since 2023/07/17
  */
 public interface Resolver {
 

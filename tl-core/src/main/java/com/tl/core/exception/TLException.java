@@ -3,8 +3,8 @@ package com.tl.core.exception;
 /**
  * TLException
  *
- * @author WangPanYong
- * @since 2023/07/12 11:15
+ * @author Wesley
+ * @since 2023/07/12
  */
 public class TLException extends RuntimeException {
 	public TLException() {

@@ -3,8 +3,8 @@ package com.tl.core.enums;
 /**
  * TemplateFieldType
  *
- * @author WangPanYong
- * @since 2023/07/17 14:41
+ * @author Wesley
+ * @since 2023/07/17
  */
 public enum TLFieldType {
 	/**
