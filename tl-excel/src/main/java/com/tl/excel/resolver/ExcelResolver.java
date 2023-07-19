@@ -1,4 +1,4 @@
-package com.tl.excel.render;
+package com.tl.excel.resolver;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
@@ -66,7 +66,6 @@ public class ExcelResolver implements Resolver {
 		for (int i = 0; i < numberOfSheets; i++) {
 			XSSFSheet sheet = workbook.getSheetAt(i);
 			int lastRowNum = sheet.getLastRowNum();
-			// 读取数据
 			for (int rowIdx = 0; rowIdx < lastRowNum; rowIdx++) {
 				XSSFRow row = sheet.getRow(rowIdx);
 				if (Objects.isNull(row)) {
@@ -83,10 +82,13 @@ public class ExcelResolver implements Resolver {
 						continue;
 					}
 					Matcher matcher = pattern.matcher(cellVal);
-					while (matcher.find()) {
+					// 一个单元格只取第一个模板字段
+					if (matcher.find()) {
 						String content = matcher.group(1);
 						ExcelField excelField = build(content, paramPattern);
-
+						String location = i + "_" + rowIdx + "_" + colIdx;
+						excelField.setLocation(location);
+						result.add(excelField);
 					}
 				}
 			}

@@ -10,7 +10,7 @@ import com.tl.core.rule.TemplateRule;
  */
 public class ExcelTemplateRule implements TemplateRule {
 
-	public static final String DEFAULT_PIC_SYMBOL = "@";
+	public static final String DEFAULT_PIC_SYMBOL = "#";
 
 	private final String prefix = "{{";
 

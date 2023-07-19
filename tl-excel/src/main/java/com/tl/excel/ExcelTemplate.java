@@ -2,7 +2,7 @@ package com.tl.excel;
 
 import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
-import com.tl.excel.render.ExcelResolver;
+import com.tl.excel.resolver.ExcelResolver;
 import com.tl.excel.resolver.ExcelField;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
