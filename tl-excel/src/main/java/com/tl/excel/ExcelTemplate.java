@@ -1,15 +1,19 @@
 package com.tl.excel;
 
+import com.tl.core.RenderDataFinder;
+import com.tl.core.data.RenderDataBuilder;
 import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
-import com.tl.excel.resolver.ExcelResolver;
+import com.tl.excel.render.ExcelRender;
 import com.tl.excel.resolver.ExcelField;
+import com.tl.excel.resolver.ExcelResolver;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,6 +28,9 @@ public class ExcelTemplate {
 	private final XSSFWorkbook workbook;
 
 	private ExcelResolver resolver;
+
+	private List<ExcelField> excelFields;
+	private List<ExcelRender> excelRenders = new ArrayList<>();
 
 	public ExcelTemplate(XSSFWorkbook workbook) {
 		this.workbook = workbook;
@@ -83,6 +90,24 @@ public class ExcelTemplate {
 	 * @since 2023/07/17
 	 **/
 	public List<ExcelField> resolve() {
-		return this.resolver.resolve(this.workbook);
+		this.excelFields = this.resolver.resolve(this.workbook);
+		return excelFields;
+	}
+
+	/**
+	 *
+	 * @param model 数据模型
+	 * @author Wesley
+	 * @since 2023/07/20
+	 **/
+	public ExcelTemplate render(Object model) {
+		if (this.excelFields == null) {
+			this.resolve();
+		}
+		RenderDataFinder renderDataFinder = RenderDataBuilder.of(model).buildFinder();
+		for (ExcelRender excelRender : excelRenders) {
+			excelRender.render(workbook, this.excelFields, renderDataFinder);
+		}
+		return this;
 	}
 }
