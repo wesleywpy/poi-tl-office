@@ -32,10 +32,11 @@ public class ExcelResolver implements Resolver {
 
 	private final ExcelConfig config;
 
-	private final TemplateRule templateRule = new ExcelTemplateRule();
+	private final TemplateRule templateRule;
 
-	public ExcelResolver(ExcelConfig config) {
+	public ExcelResolver(ExcelConfig config, TemplateRule templateRule) {
 		this.config = config;
+		this.templateRule = templateRule;
 	}
 
 	/**

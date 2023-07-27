@@ -4,15 +4,18 @@ import com.tl.core.RenderDataFinder;
 import com.tl.core.data.RenderDataBuilder;
 import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
+import com.tl.excel.render.CellExcelRender;
 import com.tl.excel.render.ExcelRender;
 import com.tl.excel.resolver.ExcelField;
 import com.tl.excel.resolver.ExcelResolver;
+import com.tl.excel.rule.ExcelTemplateRule;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,7 +76,9 @@ public class ExcelTemplate {
 				XSSFWorkbook xssfWorkbook = (XSSFWorkbook) workbook;
 				ExcelTemplate template = new ExcelTemplate(xssfWorkbook);
 				template.config = config;
-				template.resolver = new ExcelResolver(config);
+				ExcelTemplateRule excelTemplateRule = new ExcelTemplateRule();
+				template.resolver = new ExcelResolver(config, excelTemplateRule);
+				template.excelRenders.add(new CellExcelRender(config, excelTemplateRule));
 				return template;
 			}
 			throw new TLException("ExcelTemplate only supports .xlsx or .xlsm format");
@@ -110,4 +115,16 @@ public class ExcelTemplate {
 		}
 		return this;
 	}
+
+	/**
+	 *
+	 * @param out {@link OutputStream}
+	 * @author Wesley
+	 * @since 2023/07/27
+	 **/
+	public void write(OutputStream out) throws IOException {
+		this.workbook.write(out);
+		out.flush();
+	}
+
 }

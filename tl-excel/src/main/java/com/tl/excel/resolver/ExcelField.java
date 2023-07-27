@@ -21,6 +21,9 @@ public class ExcelField implements TemplateField {
 
 	private String name;
 	private String content;
+	/**
+	 * sheetIndex_rowIndex_colIndex
+	 */
 	private String location;
 	private List<String> params;
 	private TLFieldType fieldType = TLFieldType.TEXT;

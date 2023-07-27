@@ -1,6 +1,11 @@
 package com.tl.excel.rule;
 
+import cn.hutool.core.text.StrBuilder;
+import com.tl.core.TemplateField;
+import com.tl.core.enums.TLFieldType;
 import com.tl.core.rule.TemplateRule;
+
+import java.util.Optional;
 
 /**
  * ExcelTemplateRule
@@ -41,5 +46,18 @@ public class ExcelTemplateRule implements TemplateRule {
 	@Override
 	public String regexFieldParam() {
 		return "\\(([^\\)]\\w*?)\\)";
+	}
+
+	@Override
+	public String generateFullName(TemplateField templateField) {
+		StringBuilder builder = new StringBuilder(prefix);
+		if (TLFieldType.PICTURE.equals(templateField.getType())) {
+			builder.append(DEFAULT_PIC_SYMBOL);
+		}
+		builder.append(templateField.getName());
+		Optional.ofNullable(templateField.getParams())
+				.ifPresent(params -> params.forEach(p -> builder.append("(").append(p).append(")")));
+		builder.append(suffix);
+		return builder.toString();
 	}
 }

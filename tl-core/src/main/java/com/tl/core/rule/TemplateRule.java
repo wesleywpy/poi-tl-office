@@ -1,5 +1,7 @@
 package com.tl.core.rule;
 
+import com.tl.core.TemplateField;
+
 /**
  * TemplateRule
  * 模板配置规则
@@ -46,4 +48,14 @@ public interface TemplateRule {
 	 * @since 2023/07/18
 	 **/
 	String regexFieldParam();
+
+	/**
+	 *
+	 * @param templateField 模板字段
+	 * @return java.lang.String 配置字段内容
+	 * @author Wesley
+	 * @since 2023/07/27
+	 **/
+	String generateFullName(TemplateField templateField);
+
 }

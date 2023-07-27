@@ -39,7 +39,13 @@ public interface RenderDataFinder {
 	 * @author Wesley
 	 * @since 2023/07/26
 	 **/
-	PictureRenderData findPicture(TemplateField field);
+	default PictureRenderData findPicture(TemplateField field) {
+		List<PictureRenderData> pictures = findPictures(field);
+		if (pictures == null || pictures.isEmpty()) {
+			return null;
+		}
+		return pictures.get(0);
+	}
 
 	/**
 	 *

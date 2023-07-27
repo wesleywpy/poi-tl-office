@@ -67,7 +67,7 @@ public class RenderDataBuilder {
 	public static RenderDataBuilder of(Object model) {
 		RenderDataBuilder builder = new RenderDataBuilder();
 		if (model instanceof Map) {
-			builder.map((Map)model);
+			builder.map((Map<String,Object>)model);
 		}
 		return builder;
 	}

@@ -2,8 +2,10 @@ package com.tl.excel.util;
 
 import cn.hutool.core.util.StrUtil;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -73,6 +75,35 @@ public class ExcelUtil {
 				val = Optional.ofNullable(cell.getRichStringCellValue()).map(RichTextString::toString).orElse(StrUtil.EMPTY);
 		}
 		return val;
+	}
+
+	/**
+	 *
+	 * @param cell 单元格对象
+	 * @param value 被替换的值
+	 * @param searchStr 搜索的字符串
+	 * @author Wesley
+	 * @since 2023/07/27
+	 **/
+	public static void replaceCellStringValue(Cell cell, String searchStr, String value) {
+		if (StrUtil.isEmpty(searchStr) || value == null) {
+			return;
+		}
+
+		CellType cellType = cell.getCellType();
+		if (CellType.FORMULA == cellType) {
+			String formula = cell.getCellFormula();
+			cell.setCellFormula(formula.replace(searchStr, value));
+		} else {
+			String cellValue = cell.getStringCellValue();
+			// TODO: 2023/7/27 处理数字日期等格式
+			if (cellValue.equals(searchStr)) {
+				cell.setCellValue(value);
+			}
+			else {
+				cell.setCellValue(cellValue.replace(searchStr, value));
+			}
+		}
 	}
 
 }

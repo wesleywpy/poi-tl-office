@@ -3,6 +3,7 @@ package com.tl.core.data;
 import com.tl.core.RenderDataFinder;
 import com.tl.core.TemplateField;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -28,18 +29,13 @@ public class DefaultRenderDataFinder implements RenderDataFinder {
 	}
 
 	@Override
-	public PictureRenderData findPicture(TemplateField field) {
-		return null;
-	}
-
-	@Override
 	public List<TextRenderData> findTexts(TemplateField field) {
-		return null;
+		return textRenderDataMap.getOrDefault(field.getName(), new ArrayList<>());
 	}
 
 	@Override
 	public List<PictureRenderData> findPictures(TemplateField field) {
-		return null;
+		return picRenderDataMap.getOrDefault(field.getName(), new ArrayList<>());
 	}
 
 
