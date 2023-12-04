@@ -11,20 +11,20 @@
     <name>poi-tl-parent</name>
 
     <properties>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <java.version>1.8</java.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
         <apache-poi.version>5.2.3</apache-poi.version>
         <log4j.version>2.18.0</log4j.version>
-
     </properties>
 
 	<developers>
 		<developer>
 			<name>WesleyWong</name>
-			<url>https://github.com/wesleywpy/poi-tl-excel</url>
+			<url>https://github.com/wesleywpy/poi-tl-office</url>
 		</developer>
 	</developers>
 

@@ -28,6 +28,7 @@ public class ExcelTemplateTest {
 		ExcelTemplate template = ExcelTemplate.compile("src/test/resources/resolve.xlsx");
 		Map<String, Object> model = new HashMap<>();
 		model.put("字符串", RandomUtil.randomString(8));
+		model.put("字符串2", RandomUtil.randomString(8));
 
 		FileOutputStream outputStream = new FileOutputStream("out.xlsx");
 		template.render(model).write(outputStream);

@@ -7,7 +7,6 @@ import com.tl.core.enums.TLFieldType;
 import com.tl.core.rule.TemplateRule;
 import com.tl.excel.config.ExcelConfig;
 import com.tl.excel.exception.ExcelResolveException;
-import com.tl.excel.resolver.ExcelField;
 import com.tl.excel.rule.ExcelTemplateRule;
 import com.tl.excel.util.ExcelUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;

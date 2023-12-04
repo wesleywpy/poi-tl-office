@@ -71,6 +71,7 @@ public class CellExcelRender implements ExcelRender{
 			ExcelUtil.replaceCellStringValue(cell, filedFullName, text.getText());
 		} else if (TLFieldType.PICTURE.equals(templateField.getType())) {
 			PictureRenderData picture = dataFinder.findPicture(templateField);
+			// TODO: 2023/12/4 添加图片工具
 		}
 
 	}
