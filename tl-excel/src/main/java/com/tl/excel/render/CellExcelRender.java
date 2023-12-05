@@ -8,7 +8,9 @@ import com.tl.core.enums.TLFieldType;
 import com.tl.core.rule.TemplateRule;
 import com.tl.excel.config.ExcelConfig;
 import com.tl.excel.resolver.ExcelField;
+import com.tl.excel.util.ExcelPicUtil;
 import com.tl.excel.util.ExcelUtil;
+import com.tl.excel.xssf.CellWrapper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -71,7 +73,8 @@ public class CellExcelRender implements ExcelRender{
 			ExcelUtil.replaceCellStringValue(cell, filedFullName, text.getText());
 		} else if (TLFieldType.PICTURE.equals(templateField.getType())) {
 			PictureRenderData picture = dataFinder.findPicture(templateField);
-			// TODO: 2023/12/4 添加图片工具
+			ExcelPicUtil.addPicture(CellWrapper.of(cell), picture, templateField);
+			ExcelUtil.replaceCellStringValue(cell, filedFullName, StrUtil.EMPTY);
 		}
 
 	}

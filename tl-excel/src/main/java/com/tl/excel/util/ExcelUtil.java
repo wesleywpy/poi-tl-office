@@ -18,7 +18,7 @@ import java.util.Optional;
  * @author Wesley
  * @since 2023/07/18
  */
-public class ExcelUtil {
+public final class ExcelUtil {
 
 	/**
 	 *

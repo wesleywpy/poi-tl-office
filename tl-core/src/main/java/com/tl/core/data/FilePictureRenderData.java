@@ -29,4 +29,8 @@ public class FilePictureRenderData extends PictureRenderData{
 		return null;
 	}
 
+	@Override
+	public String name() {
+		return file.getName();
+	}
 }

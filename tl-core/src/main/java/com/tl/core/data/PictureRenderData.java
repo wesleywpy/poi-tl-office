@@ -16,4 +16,12 @@ public abstract class PictureRenderData implements RenderData {
 	 * @since 2023/12/04
 	 **/
 	public abstract byte[] read();
+
+	/**
+	 *
+	 * @return java.lang.String 图片名称
+	 * @author Wesley
+	 * @since 2023/12/05
+	 **/
+	public abstract String name();
 }
