@@ -36,8 +36,7 @@ public final class ExcelPicUtil {
 		int lastColumnIndex = wrapper.getLastColumnIndex();
 		XSSFSheet sheet = wrapper.getCell().getSheet();
 		XSSFWorkbook workbook = sheet.getWorkbook();
-		// TODO: 2023/12/5 支持其它类型
-		int picIdx = workbook.addPicture(picBytes, Workbook.PICTURE_TYPE_PNG);
+		int picIdx = workbook.addPicture(picBytes, renderData.picType());
 
 		XSSFClientAnchor anchor = workbook.getCreationHelper().createClientAnchor();
 		anchor.setAnchorType(ClientAnchor.AnchorType.MOVE_AND_RESIZE);

@@ -6,7 +6,7 @@ package com.tl.core.data;
  * @author WangPanYong
  * @since 2023/07/26
  */
-public abstract class PictureRenderData implements RenderData {
+public interface PictureRenderData extends RenderData {
 
 	/**
 	 * 图片字节数组
@@ -15,7 +15,7 @@ public abstract class PictureRenderData implements RenderData {
 	 * @author Wesley
 	 * @since 2023/12/04
 	 **/
-	public abstract byte[] read();
+	byte[] read();
 
 	/**
 	 *
@@ -23,5 +23,12 @@ public abstract class PictureRenderData implements RenderData {
 	 * @author Wesley
 	 * @since 2023/12/05
 	 **/
-	public abstract String name();
+	String name();
+
+	/**
+	 * @return int 图片类型
+	 * @author Wesley
+	 * @since 2023/12/15
+	 **/
+	int picType();
 }

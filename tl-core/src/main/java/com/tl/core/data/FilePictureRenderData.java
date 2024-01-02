@@ -1,5 +1,7 @@
 package com.tl.core.data;
 
+import cn.hutool.core.io.FileUtil;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -10,12 +12,15 @@ import java.nio.file.Files;
  * @author WangPanYong
  * @since 2023/12/04
  */
-public class FilePictureRenderData extends PictureRenderData{
+public class FilePictureRenderData implements PictureRenderData {
 
 	private final File file;
 
+	private final String suffix;
+
 	public FilePictureRenderData(File file) {
 		this.file = file;
+		this.suffix = FileUtil.getSuffix(file).toLowerCase();
 	}
 
 	@Override
@@ -32,5 +37,12 @@ public class FilePictureRenderData extends PictureRenderData{
 	@Override
 	public String name() {
 		return file.getName();
+	}
+
+	@Override
+	public int picType() {
+		int jpeg = 5;
+		int png = 6;
+		return suffix.equals("jpg") || suffix.equals("jpeg") ? jpeg : png;
 	}
 }
