@@ -2,6 +2,7 @@ package com.tl.excel.render;
 
 import cn.hutool.core.util.StrUtil;
 import com.tl.core.RenderDataFinder;
+import com.tl.core.TemplateField;
 import com.tl.core.data.PictureRenderData;
 import com.tl.core.data.TextRenderData;
 import com.tl.core.enums.TLFieldType;
@@ -32,7 +33,7 @@ public class CellExcelRender extends AbstractExcelRender {
 	}
 
 	@Override
-	public void render(XSSFWorkbook workbook, List<ExcelField> templateFields, RenderDataFinder dataFinder) {
+	public void render(XSSFWorkbook workbook, List<TemplateField> templateFields, RenderDataFinder dataFinder) {
 		templateFields.stream()
 					  .filter(e -> StrUtil.isAllNotEmpty(e.getName(), e.getLocation()))
 					  .forEach(e -> this.doRender(workbook, e, dataFinder));
@@ -42,7 +43,7 @@ public class CellExcelRender extends AbstractExcelRender {
 	 * @author Wesley
 	 * @since 2023/07/27
 	 **/
-	private void doRender(XSSFWorkbook workbook, ExcelField templateField, RenderDataFinder dataFinder) {
+	private void doRender(XSSFWorkbook workbook, TemplateField templateField, RenderDataFinder dataFinder) {
 		String[] locations = templateField.getLocation().split("_");
 		if (locations.length < 3) {
 			return;

@@ -3,6 +3,7 @@ package com.tl.excel.resolver;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tl.core.Resolver;
+import com.tl.core.TemplateField;
 import com.tl.core.enums.TLFieldType;
 import com.tl.core.rule.TemplateRule;
 import com.tl.excel.config.ExcelConfig;
@@ -45,8 +46,8 @@ public class ExcelResolver implements Resolver {
 	 * @author Wesley
 	 * @since 2023/07/17
 	 **/
-	public List<ExcelField> resolve(XSSFWorkbook workbook) {
-		List<ExcelField> excelFields = doResolve(workbook);
+	public List<TemplateField> resolve(XSSFWorkbook workbook) {
+		List<TemplateField> excelFields = doResolve(workbook);
 		// TODO: 2023/7/18 提取页眉页脚字段
 		return excelFields;
 	}
@@ -57,8 +58,8 @@ public class ExcelResolver implements Resolver {
 	 * @author Wesley
 	 * @since 2023/07/18
 	 **/
-	private List<ExcelField> doResolve(XSSFWorkbook workbook) {
-		List<ExcelField> result = CollUtil.newArrayList();
+	private List<TemplateField> doResolve(XSSFWorkbook workbook) {
+		List<TemplateField> result = CollUtil.newArrayList();
 		int numberOfSheets = workbook.getNumberOfSheets();
 
 		Pattern pattern = Pattern.compile(templateRule.regexField());

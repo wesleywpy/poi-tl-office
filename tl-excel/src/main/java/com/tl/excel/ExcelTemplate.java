@@ -1,6 +1,7 @@
 package com.tl.excel;
 
 import com.tl.core.RenderDataFinder;
+import com.tl.core.TemplateField;
 import com.tl.core.data.RenderDataBuilder;
 import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
@@ -32,7 +33,7 @@ public class ExcelTemplate {
 
 	private ExcelResolver resolver;
 
-	private List<ExcelField> excelFields;
+	private List<TemplateField> excelFields;
 	private List<ExcelRender> excelRenders = new ArrayList<>();
 
 	public ExcelTemplate(XSSFWorkbook workbook) {
@@ -94,7 +95,7 @@ public class ExcelTemplate {
 	 * @author Wesley
 	 * @since 2023/07/17
 	 **/
-	public List<ExcelField> resolve() {
+	public List<TemplateField> resolve() {
 		this.excelFields = this.resolver.resolve(this.workbook);
 		return excelFields;
 	}

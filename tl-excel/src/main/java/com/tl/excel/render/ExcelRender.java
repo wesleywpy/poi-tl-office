@@ -22,6 +22,6 @@ public interface ExcelRender extends Render {
 	 * @author Wesley
 	 * @since 2023/07/26
 	 **/
-	void render(XSSFWorkbook workbook, List<ExcelField> templateFields, RenderDataFinder dataFinder);
+	void render(XSSFWorkbook workbook, List<TemplateField> templateFields, RenderDataFinder dataFinder);
 
 }
