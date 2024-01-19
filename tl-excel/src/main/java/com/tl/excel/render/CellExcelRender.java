@@ -21,18 +21,14 @@ import java.util.Objects;
 
 /**
  * CellExcelRender
- *
+ * 单个格子渲染
  * @author WangPanYong
  * @since 2023/07/26
  */
-public class CellExcelRender implements ExcelRender{
-	private final ExcelConfig config;
-
-	private final TemplateRule templateRule;
+public class CellExcelRender extends AbstractExcelRender {
 
 	public CellExcelRender(ExcelConfig config, TemplateRule templateRule) {
-		this.config = config;
-		this.templateRule = templateRule;
+		super(config, templateRule);
 	}
 
 	@Override
@@ -76,7 +72,6 @@ public class CellExcelRender implements ExcelRender{
 			ExcelPicUtil.addPicture(CellWrapper.of(cell), picture, templateField);
 			ExcelUtil.replaceCellStringValue(cell, filedFullName, StrUtil.EMPTY);
 		}
-
 	}
 
 

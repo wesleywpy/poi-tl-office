@@ -1,6 +1,9 @@
 package com.tl.core.rule;
 
 import com.tl.core.TemplateField;
+import com.tl.core.enums.TLFieldType;
+
+import java.util.Map;
 
 /**
  * TemplateRule
@@ -26,11 +29,11 @@ public interface TemplateRule {
 
 	/**
 	 *
-	 * @return java.lang.String 图片字段标识
+	 * @return java.lang.String 每种类型的字段标识
 	 * @author Wesley
 	 * @since 2023/07/18
 	 **/
-	String picSymbol();
+	Map<TLFieldType, String> fieldSymbols();
 
 	/**
 	 *

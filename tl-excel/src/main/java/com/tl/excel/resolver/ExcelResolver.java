@@ -120,7 +120,9 @@ public class ExcelResolver implements Resolver {
 			throw new ExcelResolveException("Resolving excel template param error. "+ e.getMessage(), e);
 		}
 
-		String picSymbol = Optional.ofNullable(templateRule.picSymbol()).orElse(ExcelTemplateRule.DEFAULT_PIC_SYMBOL);
+		String picSymbol = Optional.ofNullable(templateRule.fieldSymbols())
+								   .map(m -> m.get(TLFieldType.PICTURE))
+								   .orElse(ExcelTemplateRule.DEFAULT_PIC_SYMBOL);
 		if (StrUtil.startWith(content, picSymbol)) {
 			field.setFieldType(TLFieldType.PICTURE);
 			content = StrUtil.subSuf(content, picSymbol.length());
