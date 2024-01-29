@@ -1,5 +1,6 @@
 package com.tl.excel.resolver;
 
+import cn.hutool.core.util.StrUtil;
 import com.tl.core.TemplateField;
 import com.tl.core.enums.TLFieldType;
 import lombok.EqualsAndHashCode;
@@ -7,6 +8,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ExcelField
@@ -24,7 +26,7 @@ public class ExcelField implements TemplateField {
 	/**
 	 * sheetIndex_rowIndex_colIndex
 	 */
-	private String location;
+	private ExcelLocator location;
 	private List<String> params;
 	private TLFieldType fieldType = TLFieldType.TEXT;
 
@@ -40,7 +42,7 @@ public class ExcelField implements TemplateField {
 
 	@Override
 	public String getLocation() {
-		return location;
+		return Objects.nonNull(location) ? location.toString() : StrUtil.EMPTY;
 	}
 
 	@Override

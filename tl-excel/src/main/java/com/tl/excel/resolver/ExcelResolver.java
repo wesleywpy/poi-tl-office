@@ -9,7 +9,10 @@ import com.tl.core.rule.TemplateRule;
 import com.tl.excel.config.ExcelConfig;
 import com.tl.excel.exception.ExcelResolveException;
 import com.tl.excel.rule.ExcelTemplateRule;
+import com.tl.excel.util.ExcelConstant;
 import com.tl.excel.util.ExcelUtil;
+import org.apache.poi.ss.usermodel.Footer;
+import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -19,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,9 +38,14 @@ public class ExcelResolver implements Resolver {
 
 	private final TemplateRule templateRule;
 
+	private final Pattern pattern;
+	private final Pattern paramPattern;
+
 	public ExcelResolver(ExcelConfig config, TemplateRule templateRule) {
 		this.config = config;
 		this.templateRule = templateRule;
+		pattern = Pattern.compile(templateRule.regexField());
+		paramPattern = Pattern.compile(templateRule.regexFieldParam());
 	}
 
 	/**
@@ -47,9 +56,7 @@ public class ExcelResolver implements Resolver {
 	 * @since 2023/07/17
 	 **/
 	public List<TemplateField> resolve(XSSFWorkbook workbook) {
-		List<TemplateField> excelFields = doResolve(workbook);
-		// TODO: 2023/7/18 提取页眉页脚字段
-		return excelFields;
+		return doResolve(workbook);
 	}
 
 	/**
@@ -59,11 +66,9 @@ public class ExcelResolver implements Resolver {
 	 * @since 2023/07/18
 	 **/
 	private List<TemplateField> doResolve(XSSFWorkbook workbook) {
-		List<TemplateField> result = CollUtil.newArrayList();
+		List<TemplateField> result = CollUtil.newLinkedList();
 		int numberOfSheets = workbook.getNumberOfSheets();
 
-		Pattern pattern = Pattern.compile(templateRule.regexField());
-		Pattern paramPattern = Pattern.compile(templateRule.regexFieldParam());
 		for (int i = 0; i < numberOfSheets; i++) {
 			XSSFSheet sheet = workbook.getSheetAt(i);
 			int lastRowNum = sheet.getLastRowNum();
@@ -82,19 +87,44 @@ public class ExcelResolver implements Resolver {
 					if (StrUtil.isEmpty(cellVal)) {
 						continue;
 					}
-					Matcher matcher = pattern.matcher(cellVal);
-					// 一个单元格只取第一个模板字段
-					if (matcher.find()) {
-						String content = matcher.group(1);
-						ExcelField excelField = build(content, paramPattern);
-						String location = i + "_" + rowIdx + "_" + colIdx;
-						excelField.setLocation(location);
-						result.add(excelField);
-					}
+					ExcelLocator excelLocator = new ExcelLocator(i, rowIdx, colIdx);
+					result.addAll(findFields(cellVal, (f) -> f.setLocation(excelLocator)));
 				}
 			}
+			result.addAll(resolveHf(sheet));
 		}
 		return result;
+	}
+
+	/**
+	 * 解析页眉页脚
+	 * @return java.util.List<com.tl.core.TemplateField>
+	 * @author Wesley
+	 * @since 2024/01/25
+	 **/
+	private List<TemplateField> resolveHf(XSSFSheet sheet) {
+		List<TemplateField> result = CollUtil.newArrayList();
+		Header header = sheet.getHeader();
+		Footer footer = sheet.getFooter();
+		result.addAll(headerFooterFields(header.getLeft(), ExcelConstant.POSITION_HL));
+		result.addAll(headerFooterFields(header.getCenter(), ExcelConstant.POSITION_HC));
+		result.addAll(headerFooterFields(header.getRight(), ExcelConstant.POSITION_HR));
+		result.addAll(headerFooterFields(footer.getLeft(), ExcelConstant.POSITION_FL));
+		result.addAll(headerFooterFields(footer.getCenter(), ExcelConstant.POSITION_FC));
+		result.addAll(headerFooterFields(footer.getRight(), ExcelConstant.POSITION_FR));
+		return result;
+	}
+
+	private List<TemplateField> headerFooterFields(String content, String hfPosition) {
+		if (StrUtil.isEmpty(content)) {
+			return new ArrayList<>();
+		}
+
+		// 去除样式相关内容
+		final String styleRegex = "&\".*?\"";
+		String noStyleContent = content.replaceAll(styleRegex, StrUtil.EMPTY);
+		ExcelLocator excelLocator = new ExcelLocator(hfPosition);
+		return this.findFields(noStyleContent, (f) -> f.setLocation(excelLocator));
 	}
 
 	/**
@@ -104,32 +134,47 @@ public class ExcelResolver implements Resolver {
 	 * @author Wesley
 	 * @since 2023/07/18
 	 **/
-	private ExcelField build(String fieldContent, Pattern paramPattern) {
-		ExcelField field = new ExcelField();
-		field.setContent(fieldContent);
+	private List<TemplateField> findFields(String fieldContent, Consumer<ExcelField> consumer) {
+		List<TemplateField> result = new ArrayList<>();
+		if (StrUtil.isEmpty(fieldContent)) {
+			return result;
+		}
 
-		String content = fieldContent;
-		Matcher matcher = paramPattern.matcher(fieldContent);
-		try {
-			List<String> params = new ArrayList<>();
-			while (matcher.find()) {
-				params.add(matcher.group(1));
+		Matcher matcher = this.pattern.matcher(fieldContent);
+		while (matcher.find()) {
+			String content = matcher.group(1);
+			ExcelField field = new ExcelField();
+			field.setContent(content);
+
+			Matcher paramMatcher = paramPattern.matcher(content);
+			try {
+				List<String> params = new ArrayList<>();
+				while (paramMatcher.find()) {
+					params.add(paramMatcher.group(1));
+				}
+				field.setParams(params);
+				if (!params.isEmpty()) {
+					content = content.replaceAll(templateRule.regexFieldParam(), StrUtil.EMPTY);
+				}
+			} catch (Exception e) {
+				throw new ExcelResolveException("Resolving excel template param error. " + e.getMessage(), e);
 			}
-			field.setParams(params);
-			content = content.replaceAll(templateRule.regexFieldParam(), StrUtil.EMPTY);
-		} catch (Exception e) {
-			throw new ExcelResolveException("Resolving excel template param error. "+ e.getMessage(), e);
-		}
 
-		String picSymbol = Optional.ofNullable(templateRule.fieldSymbols())
-								   .map(m -> m.get(TLFieldType.PICTURE))
-								   .orElse(ExcelTemplateRule.DEFAULT_PIC_SYMBOL);
-		if (StrUtil.startWith(content, picSymbol)) {
-			field.setFieldType(TLFieldType.PICTURE);
-			content = StrUtil.subSuf(content, picSymbol.length());
+			String picSymbol = Optional.ofNullable(templateRule.fieldSymbols())
+									   .map(m -> m.get(TLFieldType.PICTURE))
+									   .orElse(ExcelTemplateRule.DEFAULT_PIC_SYMBOL);
+			if (StrUtil.startWith(content, picSymbol)) {
+				field.setFieldType(TLFieldType.PICTURE);
+				content = StrUtil.subSuf(content, picSymbol.length());
+			}
+			field.setName(content);
+
+			if (Objects.nonNull(consumer)) {
+				consumer.accept(field);
+			}
+			result.add(field);
 		}
-		field.setName(content);
-		return field;
+		return result;
 	}
 
 }
