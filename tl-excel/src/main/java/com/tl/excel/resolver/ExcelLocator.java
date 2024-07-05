@@ -1,5 +1,6 @@
 package com.tl.excel.resolver;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @since 2024/01/25
  */
 @Getter
+@EqualsAndHashCode
 public class ExcelLocator {
 
 	int sheetIndex;

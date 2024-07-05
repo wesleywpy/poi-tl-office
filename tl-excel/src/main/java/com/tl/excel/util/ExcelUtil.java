@@ -1,16 +1,18 @@
 package com.tl.excel.util;
 
 import cn.hutool.core.util.StrUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.RichTextString;
+import com.tl.core.util.function.Try;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.functions.Function4Arg;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 
 /**
  * ExcelUtil
@@ -104,6 +106,34 @@ public final class ExcelUtil {
 				cell.setCellValue(cellValue.replace(searchStr, value));
 			}
 		}
+	}
+
+	/**
+	 * isInvalidName
+	 * 是否为无效的名称管理器
+	 * @param name 名称管理器
+	 * @return boolean true：无效
+	 * @author Wesley
+	 * @since 2023/01/10 11:11
+	 **/
+	public static boolean isInvalidName(Name name) {
+		return !isValidName(name);
+	}
+
+	/**
+	 * 是否为有效的名称管理器
+	 * @return boolean true：有效
+	 * @author Wesley
+	 * @since 2023/05/25 16:12
+	 **/
+	public static boolean isValidName(Name name) {
+		if (Objects.isNull(name)) {
+			return false;
+		}
+		return Try.ofFailed(name::getRefersToFormula)
+				  .filter(e -> StrUtil.isNotEmpty(e) && !e.contains(ExcelConstant.NAME_ILLEGAL))
+				  .map(e -> new AreaReference(e, SpreadsheetVersion.EXCEL2007))
+				  .isSuccess();
 	}
 
 }

@@ -1,7 +1,5 @@
 package com.tl.core.util.function;
 
-import com.qz.lims.report.framework.function.TryConsumer;
-
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;

@@ -22,6 +22,14 @@ public interface TemplateField {
 
 	/**
 	 *
+	 * @return java.lang.String 分组名称
+	 * @author Wesley
+	 * @since 2024/07/04
+	 **/
+	String getGroup();
+
+	/**
+	 *
 	 * @return java.lang.String 字段内容
 	 * @author Wesley
 	 * @since 2023/07/17

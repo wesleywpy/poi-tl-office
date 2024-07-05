@@ -6,6 +6,7 @@ import com.tl.core.enums.TLFieldType;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Objects;
@@ -17,11 +18,13 @@ import java.util.Objects;
  * @since 2023/07/13
  */
 @Setter
+@Accessors(chain = true)
 @EqualsAndHashCode(of = {"name","location"})
 @ToString
 public class ExcelField implements TemplateField {
 
 	private String name;
+	private String group;
 	private String content;
 	/**
 	 * sheetIndex_rowIndex_colIndex
@@ -33,6 +36,11 @@ public class ExcelField implements TemplateField {
 	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public String getGroup() {
+		return null;
 	}
 
 	@Override

@@ -35,6 +35,10 @@ public final class ExcelConstant {
      * 不合法的名称管理器
      */
     public static final String NAME_ILLEGAL = "#REF!";
+	/**
+	 * 名称管理器前缀：list渲染
+	 */
+    public static final String NAME_PREFIX_LIST = "TL_list_";
 
     private ExcelConstant() {
         super();

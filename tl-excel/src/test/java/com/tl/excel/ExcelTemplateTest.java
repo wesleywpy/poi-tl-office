@@ -36,6 +36,7 @@ public class ExcelTemplateTest {
 		model.put("图片", pictureRenderData);
 
 		FileOutputStream outputStream = new FileOutputStream("out.xlsx");
+
 		template.render(model).write(outputStream);
 		outputStream.close();
 	}

@@ -11,17 +11,14 @@ import com.tl.excel.exception.ExcelResolveException;
 import com.tl.excel.rule.ExcelTemplateRule;
 import com.tl.excel.util.ExcelConstant;
 import com.tl.excel.util.ExcelUtil;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.xssf.usermodel.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -68,6 +65,7 @@ public class ExcelResolver implements Resolver {
 	private List<TemplateField> doResolve(XSSFWorkbook workbook) {
 		List<TemplateField> result = CollUtil.newLinkedList();
 		int numberOfSheets = workbook.getNumberOfSheets();
+		Map<ExcelLocator, String> nameLocators = findNameLocators(workbook);
 
 		for (int i = 0; i < numberOfSheets; i++) {
 			XSSFSheet sheet = workbook.getSheetAt(i);
@@ -88,12 +86,41 @@ public class ExcelResolver implements Resolver {
 						continue;
 					}
 					ExcelLocator excelLocator = new ExcelLocator(i, rowIdx, colIdx);
-					result.addAll(findFields(cellVal, (f) -> f.setLocation(excelLocator)));
+					String group = nameLocators.get(excelLocator);
+					result.addAll(findFields(cellVal, (f) -> f.setLocation(excelLocator).setGroup(group)));
 				}
 			}
 			result.addAll(resolveHf(sheet));
 		}
 		return result;
+	}
+
+	/**
+	 * 解析名称管理器
+	 *
+	 * @return java.util.List<com.tl.core.TemplateField>
+	 * @author Wesley
+	 * @since 2024/07/04
+	 **/
+	private Map<ExcelLocator,String> findNameLocators(XSSFWorkbook workbook) {
+		List<XSSFName> allNames = workbook.getAllNames();
+		Map<ExcelLocator, String> locators = new HashMap<>();
+		for (XSSFName name : allNames) {
+			if (ExcelUtil.isInvalidName(name)) {
+				continue;
+			}
+			String nameName = name.getNameName();
+			String group = StrUtil.removePrefixIgnoreCase(nameName, ExcelConstant.NAME_PREFIX_LIST);
+			if (StrUtil.isNotEmpty(group) && group.length() < nameName.length()) {
+				int sheetIndex = workbook.getSheetIndex(name.getSheetName());
+				AreaReference areaReference = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+				CellReference[] referencedCells = areaReference.getAllReferencedCells();
+				for (CellReference cell : referencedCells) {
+					locators.put(new ExcelLocator(sheetIndex, cell.getRow(), cell.getCol()), group);
+				}
+			}
+		}
+		return locators;
 	}
 
 	/**
