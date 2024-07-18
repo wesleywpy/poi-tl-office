@@ -6,10 +6,12 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.functions.Function4Arg;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -106,6 +108,23 @@ public final class ExcelUtil {
 				cell.setCellValue(cellValue.replace(searchStr, value));
 			}
 		}
+	}
+
+	/**
+	 *
+	 * @param mergedRegions 合并区域列表
+	 * @param rowIndex 行坐标
+	 * @param columnIndex 列坐标
+	 * @author Wesley
+	 * @since 2024/07/27
+	 **/
+	public static CellRangeAddress findFirstRegion(List<CellRangeAddress> mergedRegions, int rowIndex, int columnIndex) {
+		for (CellRangeAddress mergedRegion : mergedRegions) {
+			if (mergedRegion.getFirstRow() == rowIndex && mergedRegion.getFirstColumn() == columnIndex) {
+				return mergedRegion;
+			}
+		}
+		return null;
 	}
 
 	/**

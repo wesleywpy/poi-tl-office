@@ -19,7 +19,7 @@ import java.util.Objects;
  */
 @Setter
 @Accessors(chain = true)
-@EqualsAndHashCode(of = {"name","location"})
+@EqualsAndHashCode(of = {"name","group","location"})
 @ToString
 public class ExcelField implements TemplateField {
 
@@ -40,7 +40,7 @@ public class ExcelField implements TemplateField {
 
 	@Override
 	public String getGroup() {
-		return null;
+		return group;
 	}
 
 	@Override
