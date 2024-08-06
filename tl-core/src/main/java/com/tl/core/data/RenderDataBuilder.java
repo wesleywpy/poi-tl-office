@@ -1,11 +1,12 @@
 package com.tl.core.data;
 
+import com.google.common.collect.HashBasedTable;
+import com.google.common.collect.Table;
 import com.tl.core.RenderDataFinder;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * RenderDataBuilder
@@ -13,36 +14,32 @@ import java.util.Map;
  * @author WangPanYong
  * @since 2023/07/26
  */
+@Getter
 public class RenderDataBuilder {
 
-	Map<String, List<TextRenderData>> textRenderDataMap = new HashMap<>();
-	Map<String, List<PictureRenderData>> picRenderDataMap = new HashMap<>();
+	private Table<String, String, GroupRenderData> dataTable = HashBasedTable.create();;
 
+	@Setter
+	String defaultGroupName = "TLGroup";
 
 	public RenderDataBuilder map(Map<String, Object> mapModel){
-		mapModel.forEach(this::object);
+		mapModel.forEach((key, val) -> this.object(defaultGroupName, key, val));
 		return this;
 	}
 
-	RenderDataBuilder object(String key, Object model) {
+	RenderDataBuilder object(String group, String key, Object model) {
 		if (model == null) {
 			return this;
 		}
 
-		List<TextRenderData> textList = textRenderDataMap.getOrDefault(key, new ArrayList<>());
-		List<PictureRenderData> picList = picRenderDataMap.getOrDefault(key, new ArrayList<>());
-
-		if (model instanceof TextRenderData) {
-			textList.add((TextRenderData)model);
-			textRenderDataMap.put(key, textList);
-		} else if (model instanceof PictureRenderData) {
-			picList.add((PictureRenderData)model);
-			picRenderDataMap.put(key, picList);
-		}
-		// TODO: 2023/7/26 其它数据类型
-		else {
-			textList.add(new StringRenderData(model.toString()));
-			textRenderDataMap.put(key, textList);
+		GroupRenderData groupData = Optional.ofNullable(dataTable.get(group, key)).orElse(new GroupRenderData(group, key));
+		Class<?> modelClass = model.getClass();
+		if (model instanceof RenderData) {
+			groupData.add((RenderData) model);
+			dataTable.put(group, key, groupData);
+		} else {
+			groupData.add(new TextRenderData(model.toString()));
+			dataTable.put(group, key, groupData);
 		}
 		return this;
 	}
@@ -54,7 +51,7 @@ public class RenderDataBuilder {
 	 * @since 2023/07/26
 	 **/
 	public RenderDataFinder buildFinder() {
-		return new DefaultRenderDataFinder(this.textRenderDataMap, this.picRenderDataMap);
+		return new DefaultRenderDataFinder(dataTable, defaultGroupName);
 	}
 
 	/**

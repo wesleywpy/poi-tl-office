@@ -15,7 +15,7 @@ import java.util.List;
  */
 public interface RenderDataFinder {
 
-	RenderData find(TemplateField field);
+	List<RenderData> findAll(TemplateField field);
 
 	/**
 	 *
@@ -27,7 +27,7 @@ public interface RenderDataFinder {
 	default TextRenderData findText(TemplateField field) {
 		List<TextRenderData> texts = findTexts(field);
 		if (texts == null || texts.isEmpty()) {
-			return new StringRenderData();
+			return new TextRenderData();
 		}
 		return texts.get(0);
 	}

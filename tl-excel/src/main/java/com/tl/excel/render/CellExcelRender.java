@@ -45,7 +45,7 @@ public class CellExcelRender extends AbstractExcelRender {
 	 **/
 	private void doRender(XSSFWorkbook workbook, TemplateField templateField, RenderDataFinder dataFinder) {
 		String[] locations = templateField.getLocation().split("_");
-		if (locations.length < 3) {
+		if (locations.length < 3 || !StrUtil.isNumeric(locations[0])) {
 			return;
 		}
 		int sheetIdx = Integer.parseInt(locations[0]);

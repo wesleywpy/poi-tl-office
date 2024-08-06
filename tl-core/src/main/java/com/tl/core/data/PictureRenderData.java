@@ -31,4 +31,9 @@ public interface PictureRenderData extends RenderData {
 	 * @since 2023/12/15
 	 **/
 	int picType();
+
+	@Override
+	default String getString() {
+		return name();
+	}
 }

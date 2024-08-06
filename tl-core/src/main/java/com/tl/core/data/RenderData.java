@@ -10,4 +10,12 @@ import java.io.Serializable;
  */
 public interface RenderData extends Serializable {
 
+	/**
+	 *
+	 * @return java.lang.String
+	 * @author WesleyWong
+	 * @since 2024/07/26
+	 **/
+	String getString();
+
 }

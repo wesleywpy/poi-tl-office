@@ -23,15 +23,15 @@ import java.util.Objects;
 @ToString
 public class ExcelField implements TemplateField {
 
-	private String name;
-	private String group;
-	private String content;
+	protected String name;
+	protected String group;
+	protected String content;
 	/**
 	 * sheetIndex_rowIndex_colIndex
 	 */
-	private ExcelLocator location;
-	private List<String> params;
-	private TLFieldType fieldType = TLFieldType.TEXT;
+	protected ExcelLocator location;
+	protected List<String> params;
+	protected TLFieldType fieldType = TLFieldType.TEXT;
 
 	@Override
 	public String getName() {

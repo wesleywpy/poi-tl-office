@@ -7,6 +7,7 @@ import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
 import com.tl.excel.render.CellExcelRender;
 import com.tl.excel.render.ExcelRender;
+import com.tl.excel.render.NameExcelRender;
 import com.tl.excel.resolver.ExcelField;
 import com.tl.excel.resolver.ExcelResolver;
 import com.tl.excel.rule.ExcelTemplateRule;
@@ -19,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * ExcelTemplate
@@ -80,6 +82,7 @@ public class ExcelTemplate {
 				ExcelTemplateRule excelTemplateRule = new ExcelTemplateRule();
 				template.resolver = new ExcelResolver(config, excelTemplateRule);
 				template.excelRenders.add(new CellExcelRender(config, excelTemplateRule));
+				template.excelRenders.add(new NameExcelRender(config, excelTemplateRule));
 				return template;
 			}
 			throw new TLException("ExcelTemplate only supports .xlsx or .xlsm format");
@@ -111,6 +114,25 @@ public class ExcelTemplate {
 			this.resolve();
 		}
 		RenderDataFinder renderDataFinder = RenderDataBuilder.of(model).buildFinder();
+		for (ExcelRender excelRender : excelRenders) {
+			excelRender.render(workbook, this.excelFields, renderDataFinder);
+		}
+		return this;
+	}
+
+	/**
+	 *
+	 * @param renderDataFinder {@link RenderDataFinder}
+	 * @author Wesley
+	 * @since 2023/07/20
+	 **/
+	public ExcelTemplate render(RenderDataFinder renderDataFinder) {
+		if (Objects.isNull(renderDataFinder)) {
+			return this;
+		}
+		if (this.excelFields == null) {
+			this.resolve();
+		}
 		for (ExcelRender excelRender : excelRenders) {
 			excelRender.render(workbook, this.excelFields, renderDataFinder);
 		}

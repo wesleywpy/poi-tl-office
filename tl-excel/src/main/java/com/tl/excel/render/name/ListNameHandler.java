@@ -2,6 +2,7 @@ package com.tl.excel.render.name;
 
 import com.tl.core.RenderDataFinder;
 import com.tl.core.TemplateField;
+import com.tl.core.rule.TemplateRule;
 import com.tl.excel.render.NameExcelRender;
 
 import java.util.List;
@@ -40,7 +41,8 @@ public class ListNameHandler implements NameHandler{
 		if (fields.isEmpty()) {
 			return;
 		}
-		List<NameRefRow> nameRefRows = nameWrapper.analyseRefRange();
-
+		List<NameRefRow> nameRefRows = nameWrapper.analyseRefRange(nameRender.getTemplateRule());
+		// TODO: 2024/8/6 实现List填充
+		System.out.println(nameRefRows.size());
 	}
 }

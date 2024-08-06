@@ -6,14 +6,11 @@ package com.tl.core.data;
  * @author WangPanYong
  * @since 2023/07/26
  */
+@Deprecated
 public class StringRenderData extends TextRenderData {
 
-	public StringRenderData() {
-
-	}
 
 	public StringRenderData(String text) {
-		setText(text);
+		super(text);
 	}
-
 }

@@ -87,7 +87,14 @@ public class ExcelResolver implements Resolver {
 					}
 					ExcelLocator excelLocator = new ExcelLocator(i, rowIdx, colIdx);
 					String group = nameLocators.get(excelLocator);
-					result.addAll(findFields(cellVal, (f) -> f.setLocation(excelLocator).setGroup(group)));
+					// TODO: 2024/7/19 Name区域 location值 单独设置
+					result.addAll(findFields(cellVal, (f) -> {
+						if (Objects.nonNull(group)) {
+							f.setGroup(group);
+						} else {
+							f.setLocation(excelLocator);
+						}
+					}));
 				}
 			}
 			result.addAll(resolveHf(sheet));
