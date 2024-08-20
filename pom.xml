@@ -147,6 +147,7 @@
     <modules>
         <module>tl-excel</module>
 		<module>tl-core</module>
+		<module>tl-word</module>
 	</modules>
 
 </project>
