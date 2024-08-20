@@ -17,25 +17,24 @@ import java.util.*;
 @Getter
 public class RenderDataBuilder {
 
-	private Table<String, String, GroupRenderData> dataTable = HashBasedTable.create();;
+	private final Table<String, String, GroupRenderData> dataTable = HashBasedTable.create();
 
 	@Setter
 	String defaultGroupName = "TLGroup";
 
 	public RenderDataBuilder map(Map<String, Object> mapModel){
-		mapModel.forEach((key, val) -> this.object(defaultGroupName, key, val));
+		mapModel.forEach((key, val) -> this.add(defaultGroupName, key, val));
 		return this;
 	}
 
-	RenderDataBuilder object(String group, String key, Object model) {
+	public RenderDataBuilder add(String group, String key, Object model) {
 		if (model == null) {
 			return this;
 		}
 
 		GroupRenderData groupData = Optional.ofNullable(dataTable.get(group, key)).orElse(new GroupRenderData(group, key));
-		Class<?> modelClass = model.getClass();
-		if (model instanceof RenderData) {
-			groupData.add((RenderData) model);
+		if (model instanceof RenderData renderData) {
+			groupData.add(renderData);
 			dataTable.put(group, key, groupData);
 		} else {
 			groupData.add(new TextRenderData(model.toString()));

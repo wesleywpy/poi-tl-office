@@ -65,4 +65,13 @@ public interface RenderDataFinder {
 	 **/
 	List<PictureRenderData> findPictures(TemplateField field);
 
+	/**
+	 * 最大行数
+	 * @param group 分组名称
+	 * @return int
+	 * @author Wesley
+	 * @since 2024/08/07
+	 **/
+	int getMaxSize(String group);
+
 }

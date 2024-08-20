@@ -32,19 +32,19 @@ import java.util.regex.Pattern;
 @Getter
 public class NameWrapper {
 
-	private final XSSFName name;
+	final XSSFName name;
 
-	private final XSSFSheet sheet;
+	final XSSFSheet sheet;
 
-	private final String nameName;
+	final String nameName;
 
-	int startRow;
+	final int startRow;
 
-	int startCol;
+	final int startCol;
 
-	int endRow;
+	final int endRow;
 
-	int endCol;
+	final int endCol;
 
 	List<NameRefRow> refRows;
 
@@ -60,6 +60,30 @@ public class NameWrapper {
 		this.endRow = lastCell.getRow();
 		this.startCol = firstCell.getCol();
 		this.endCol = lastCell.getCol();
+	}
+
+	/**
+	 * 获取合并区域
+	 *
+	 * @return java.util.List<org.apache.poi.ss.util.CellRangeAddress>
+	 * @author Wesley
+	 * @since 2024/08/19
+	 **/
+	List<CellRangeAddress> findMergedRegion() {
+		List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
+		List<CellRangeAddress> result = new ArrayList<>();
+		for (CellRangeAddress mergedRegion : mergedRegions) {
+			flag:
+			for (int rowIdx = startRow; rowIdx <= this.endRow; rowIdx++) {
+				for (int colIdx = this.startCol; colIdx < this.endCol; colIdx++) {
+					if (mergedRegion.isInRange(rowIdx, colIdx)) {
+						result.add(mergedRegion);
+						break flag;
+					}
+				}
+			}
+		}
+		return result;
 	}
 
 	/**
@@ -180,6 +204,7 @@ public class NameWrapper {
 				content = StrUtil.subSuf(content, picSymbol.length());
 			}
 			field.setName(content);
+			field.fullName = templateRule.generateFullName(field);
 			result.add(field);
 		}
 		if (result.isEmpty()) {

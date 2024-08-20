@@ -16,25 +16,26 @@ public class GroupRenderData {
 	final List<TextRenderData> renderDataList;
 	final List<PictureRenderData> picRenderData;
 
+	final List<RenderData> allData;
+
 	GroupRenderData(String fieldName, String group) {
 		this.fieldName = fieldName;
 		this.group = group;
 		this.renderDataList = new ArrayList<>();
 		this.picRenderData = new ArrayList<>();
+		this.allData = new ArrayList<>();
 	}
 
 	void add(RenderData renderData) {
-		if (renderData instanceof PictureRenderData) {
-			picRenderData.add((PictureRenderData) renderData);
-		} else if (renderData instanceof TextRenderData){
-			renderDataList.add((TextRenderData) renderData);
+		if (renderData instanceof PictureRenderData data) {
+			picRenderData.add(data);
+		} else if (renderData instanceof TextRenderData data){
+			renderDataList.add(data);
 		}
+		allData.add(renderData);
 	}
 
 	List<RenderData> all() {
-		List<RenderData> result = new ArrayList<>(renderDataList.size() + picRenderData.size());
-		result.addAll(renderDataList);
-		result.addAll(picRenderData);
-		return result;
+		return allData;
 	}
 }

@@ -5,9 +5,7 @@ import com.google.common.collect.Table;
 import com.tl.core.RenderDataFinder;
 import com.tl.core.TemplateField;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * DefaultRenderDataFinder
@@ -42,5 +40,12 @@ public class DefaultRenderDataFinder implements RenderDataFinder {
 	public List<RenderData> findAll(TemplateField field) {
 		return Optional.ofNullable(dataTable.get(StrUtil.emptyToDefault(field.getGroup(), defaultGroupName), field.getName()))
                        .map(GroupRenderData::all).orElse(new ArrayList<>());
+	}
+
+	@Override
+	public int getMaxSize(String group) {
+		String groupName = StrUtil.emptyToDefault(group, defaultGroupName);
+		Map<String, GroupRenderData> row = dataTable.row(groupName);
+		return row.values().stream().map(g -> g.all().size()).max(Integer::compareTo).orElse(0);
 	}
 }

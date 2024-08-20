@@ -70,8 +70,10 @@ public class CellExcelRender extends AbstractExcelRender {
 			ExcelUtil.replaceCellStringValue(cell, filedFullName, text.getText());
 		} else if (TLFieldType.PICTURE.equals(templateField.getType())) {
 			PictureRenderData picture = dataFinder.findPicture(templateField);
-			ExcelPicUtil.addPicture(CellWrapper.of(cell), picture, templateField);
-			ExcelUtil.replaceCellStringValue(cell, filedFullName, StrUtil.EMPTY);
+			if (Objects.nonNull(picture)) {
+				ExcelPicUtil.addPicture(CellWrapper.of(cell), picture, templateField);
+				ExcelUtil.replaceCellStringValue(cell, filedFullName, StrUtil.EMPTY);
+			}
 		}
 	}
 
