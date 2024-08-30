@@ -9,4 +9,5 @@ import com.tl.core.rule.DefaultTemplateRule;
  * @since 2024/08/20
  */
 public class WordTemplateRule extends DefaultTemplateRule {
+
 }
