@@ -9,8 +9,8 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
 /**
@@ -60,5 +60,16 @@ public class WordTemplate {
 		} catch (IOException e) {
 			throw new TLException(e.getMessage(), e);
 		}
+	}
+
+	/**
+	 *
+	 * @param out {@link OutputStream}
+	 * @author Wesley
+	 * @since 2024/09/06
+	 **/
+	public void write(OutputStream out) throws IOException {
+		this.document.write(out);
+		out.flush();
 	}
 }
