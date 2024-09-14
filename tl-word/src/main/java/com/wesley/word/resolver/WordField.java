@@ -3,12 +3,17 @@ package com.wesley.word.resolver;
 import cn.hutool.core.util.StrUtil;
 import com.tl.core.TemplateField;
 import com.tl.core.enums.TLFieldType;
+import com.tl.core.rule.TemplateRule;
 import lombok.EqualsAndHashCode;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
 
 /**
  * WordField
@@ -28,6 +33,8 @@ public class WordField implements TemplateField {
 	protected List<String> params;
 	protected TLFieldType fieldType = TLFieldType.TEXT;
 
+	protected String location;
+
 	@Override
 	public String getName() {
 		return name;
@@ -45,7 +52,7 @@ public class WordField implements TemplateField {
 
 	@Override
 	public String getLocation() {
-		return StrUtil.EMPTY;
+		return location;
 	}
 
 	@Override
