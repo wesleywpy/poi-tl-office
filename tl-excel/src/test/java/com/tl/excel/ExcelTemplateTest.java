@@ -61,16 +61,9 @@ public class ExcelTemplateTest {
 		builder.add("group1",
 					"序号", "1")
 			   .add("group1", "序号", "2");
-
 		String t = """
 			I wonder how the baseball came out in the grand leagues today, he thought. It would be wonderful to do this with a radio.\s
 			Then he thought, think of it always. Think of what you are doing. You must do nothing stupid.
-			
-			Then he said aloud, “I wish I had the boy. To help me and to see this.” \s
-			No one should be alone in their old age, he thought. But it is unavoidable. I must\s
-			remember to eat the tuna before he spoils in order to keep strong. Remember, no matter\s
-			how little you want to, that you must eat him in the morning. Remember, he said to\s
-			himself.\s
 			""";
 
 		RenderDataFinder renderDataFinder = builder.buildFinder();

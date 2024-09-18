@@ -3,15 +3,20 @@ package com.wesley.word.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.tl.core.exception.TLException;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTMarkupRange;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.w3c.dom.Node;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -22,6 +27,8 @@ import java.util.Objects;
  * @since 2024/09/09
  */
 public final class WordUtil {
+	private static final String BOOKMARK_END_LABEL = "w:bookmarkEnd";
+
 	private WordUtil() {
 	}
 
@@ -78,5 +85,44 @@ public final class WordUtil {
 		run.setText(StrUtil.EMPTY, 0);
 		CTR ctr = run.getCTR();
 		ctr.getTList().forEach(XmlObject::setNil);
+	}
+
+	/**
+	 * findBookmarkRuns
+	 * 找到书签之间的run
+	 *
+	 * @param paragraph 段落
+	 * @param bookmarkStart 书签开始位置
+	 * @author Wesley
+	 * @since 2024/09/18
+	 **/
+	public static List<XWPFRun> findBookmarkRuns(XWPFParagraph paragraph, CTBookmark bookmarkStart) {
+		List<XWPFRun> result = new ArrayList<>();
+		List<XWPFRun> runs = paragraph.getRuns();
+		Node bookmarkStartNode = bookmarkStart.getDomNode();
+		Node nextNode = bookmarkStartNode.getNextSibling();
+		List<CTMarkupRange> bookmarkEndList = paragraph.getCTP().getBookmarkEndList();
+
+		domBreak:
+		for (XWPFRun run : runs) {
+			if (BOOKMARK_END_LABEL.equalsIgnoreCase(nextNode.getNodeName()) && Objects.nonNull(bookmarkEndList)) {
+				for (CTMarkupRange markupRange : bookmarkEndList) {
+					Node domNode = markupRange.getDomNode();
+					if (nextNode == domNode) {
+						break domBreak;
+					}
+				}
+			}
+			Node runNode = run.getCTR().getDomNode();
+			if (nextNode == runNode) {
+				result.add(run);
+				nextNode = nextNode.getNextSibling();
+			}
+		}
+		if (result.isEmpty()) {
+			XWPFRun dataRun = paragraph.createRun();
+			result.add(dataRun);
+		}
+		return result;
 	}
 }

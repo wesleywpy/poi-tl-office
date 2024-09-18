@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class TLConfig {
-
-	String fieldDefaultGroupName;
+	protected String fieldDefaultGroupName = "TLGroup";
 
 }

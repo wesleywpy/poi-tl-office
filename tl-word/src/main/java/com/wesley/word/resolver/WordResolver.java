@@ -206,7 +206,8 @@ public class WordResolver implements Resolver {
 
 				Optional.ofNullable(extract(segmentEntry.getKey()))
 						.ifPresent(f -> {
-							f.setLocation(bookmarkName);
+							f.setLocation(bookmarkName)
+							 .setGroup(config.getFieldDefaultGroupName());
 							result.add(f);
 						});
 				idOffset++;

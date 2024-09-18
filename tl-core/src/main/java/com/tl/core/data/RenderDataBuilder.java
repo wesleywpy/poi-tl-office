@@ -3,6 +3,7 @@ package com.tl.core.data;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import com.tl.core.RenderDataFinder;
+import com.tl.core.TLConfig;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,12 +19,11 @@ import java.util.*;
 public class RenderDataBuilder {
 
 	private final Table<String, String, GroupRenderData> dataTable = HashBasedTable.create();
-
-	@Setter
-	String defaultGroupName = "TLGroup";
+	@Getter
+	private final TLConfig tlConfig = new TLConfig();
 
 	public RenderDataBuilder map(Map<String, Object> mapModel){
-		mapModel.forEach((key, val) -> this.add(defaultGroupName, key, val));
+		mapModel.forEach((key, val) -> this.add(tlConfig.getFieldDefaultGroupName(), key, val));
 		return this;
 	}
 
@@ -31,7 +31,7 @@ public class RenderDataBuilder {
 		if (model == null) {
 			return this;
 		}
-
+		group = Objects.isNull(group) ? tlConfig.getFieldDefaultGroupName() : group;
 		GroupRenderData groupData = Optional.ofNullable(dataTable.get(group, key)).orElse(new GroupRenderData(group, key));
 		if (model instanceof RenderData renderData) {
 			groupData.add(renderData);
@@ -50,7 +50,7 @@ public class RenderDataBuilder {
 	 * @since 2023/07/26
 	 **/
 	public RenderDataFinder buildFinder() {
-		return new DefaultRenderDataFinder(dataTable, defaultGroupName);
+		return new DefaultRenderDataFinder(dataTable, tlConfig.getFieldDefaultGroupName());
 	}
 
 	/**
