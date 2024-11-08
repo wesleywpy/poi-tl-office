@@ -1,6 +1,7 @@
 package com.tl.word;
 
 import cn.hutool.core.util.RandomUtil;
+import com.tl.core.data.FilePictureRenderData;
 import com.tl.core.data.RenderDataBuilder;
 import com.wesley.word.WordTemplate;
 import com.wesley.word.config.WordConfig;
@@ -35,9 +36,14 @@ public class WordTemplateTst {
 		File file = new File("src/test/resources/resolve.docx");
 		WordTemplate template = WordTemplate.compile(file, new WordConfig());
 
+		File image = new File("src/test/resources/img/sign_1.png");
+		FilePictureRenderData pictureRenderData = new FilePictureRenderData(image);
+
 		RenderDataBuilder builder = RenderDataBuilder.of(null);
 		builder.add(null, "文本1", RandomUtil.randomString(8))
 			   .add(null, "文本2", RandomUtil.randomString(8));
+		builder.add(null, "表格文本", RandomUtil.randomString(8))
+			   .add(null, "表格图片", pictureRenderData);
 
 		template.render(builder.buildFinder());
 		FileOutputStream outputStream = new FileOutputStream("out.docx");

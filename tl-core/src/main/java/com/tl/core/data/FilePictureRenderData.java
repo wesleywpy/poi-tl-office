@@ -1,11 +1,11 @@
 package com.tl.core.data;
 
 import cn.hutool.core.io.FileUtil;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Objects;
 
 /**
  * FilePictureRenderData
@@ -19,6 +19,8 @@ public class FilePictureRenderData implements PictureRenderData {
 
 	private final String suffix;
 
+	private byte[] cache;
+
 	public FilePictureRenderData(File file) {
 		this.file = file;
 		this.suffix = FileUtil.getSuffix(file).toLowerCase();
@@ -26,8 +28,12 @@ public class FilePictureRenderData implements PictureRenderData {
 
 	@Override
 	public byte[] read() {
+		if (Objects.nonNull(cache)) {
+			return cache;
+		}
 		try {
-			return Files.readAllBytes(file.toPath());
+			cache = Files.readAllBytes(file.toPath());
+			return cache;
 		} catch (IOException e) {
 			// TODO: 2023/12/4 输出警告日志
 			e.printStackTrace();
