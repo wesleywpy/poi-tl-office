@@ -49,22 +49,20 @@ public class ExcelTemplateTest {
 	public void renderList() throws IOException {
 		ExcelTemplate template = ExcelTemplate.compile("src/test/resources/resolve.xlsx");
 
-		File image = new File("src/test/resources/img/admin.png");
+		File image = new File("src/test/resources/img/sign_1.png");
 		FilePictureRenderData pictureRenderData = new FilePictureRenderData(image);
 
 		RenderDataBuilder builder = RenderDataBuilder.of(null);
+		builder.add("字符串", RandomUtil.randomString(8));
+		builder.add("字符串2", RandomUtil.randomString(8));
+
 		builder.add("group1", "字符串", RandomUtil.randomString(8))
 //			   .add("group1", "字符串", RandomUtil.randomString(8))
 			   .add("group1", "图片", pictureRenderData)
 			   .add("group1", "图片", pictureRenderData);
 
-		builder.add("group1",
-					"序号", "1")
+		builder.add("group1", "序号", "1")
 			   .add("group1", "序号", "2");
-		String t = """
-			I wonder how the baseball came out in the grand leagues today, he thought. It would be wonderful to do this with a radio.\s
-			Then he thought, think of it always. Think of what you are doing. You must do nothing stupid.
-			""";
 
 		RenderDataFinder renderDataFinder = builder.buildFinder();
 		FileOutputStream outputStream = new FileOutputStream("out.xlsx");

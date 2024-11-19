@@ -27,6 +27,10 @@ public class RenderDataBuilder {
 		return this;
 	}
 
+	public RenderDataBuilder add(String key, Object model) {
+		return this.add(tlConfig.getFieldDefaultGroupName(), key, model);
+	}
+
 	public RenderDataBuilder add(String group, String key, Object model) {
 		if (model == null) {
 			return this;

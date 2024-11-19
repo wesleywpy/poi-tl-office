@@ -40,7 +40,6 @@ public final class ExcelUtil {
 			case NUMERIC:
 				String cellString = cell.toString();
 				if (DateUtil.isCellDateFormatted(cell)) {
-					// TODO: 2023/7/18 定制格式
 					// 日期格式yyyy-mm-dd
 					SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 					// 日期型

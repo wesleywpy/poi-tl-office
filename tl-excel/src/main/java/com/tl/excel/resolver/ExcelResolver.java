@@ -87,7 +87,6 @@ public class ExcelResolver implements Resolver {
 					}
 					ExcelLocator excelLocator = new ExcelLocator(i, rowIdx, colIdx);
 					String group = nameLocators.get(excelLocator);
-					// TODO: 2024/7/19 Name区域 location值 单独设置
 					result.addAll(findFields(cellVal, (f) -> {
 						if (Objects.nonNull(group)) {
 							f.setGroup(group);
@@ -117,14 +116,20 @@ public class ExcelResolver implements Resolver {
 				continue;
 			}
 			String nameName = name.getNameName();
-			// TODO: 2024/7/15
-			String group = StrUtil.removePrefixIgnoreCase(nameName, ExcelConstant.NAME_PREFIX_LIST);
-			if (StrUtil.isNotEmpty(group) && group.length() < nameName.length()) {
-				int sheetIndex = workbook.getSheetIndex(name.getSheetName());
-				AreaReference areaReference = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
-				CellReference[] referencedCells = areaReference.getAllReferencedCells();
-				for (CellReference cell : referencedCells) {
-					locators.put(new ExcelLocator(sheetIndex, cell.getRow(), cell.getCol()), group);
+
+			Set<String> groupNamePrefixSet = this.config.getGroupNamePrefixSet();
+			if (Objects.isNull(groupNamePrefixSet) || groupNamePrefixSet.isEmpty()) {
+				continue;
+			}
+			for (String prefix : groupNamePrefixSet) {
+				String group = StrUtil.removePrefixIgnoreCase(nameName, prefix);
+				if (StrUtil.isNotEmpty(group) && group.length() < nameName.length()) {
+					int sheetIndex = workbook.getSheetIndex(name.getSheetName());
+					AreaReference areaReference = new AreaReference(name.getRefersToFormula(), SpreadsheetVersion.EXCEL2007);
+					CellReference[] referencedCells = areaReference.getAllReferencedCells();
+					for (CellReference cell : referencedCells) {
+						locators.put(new ExcelLocator(sheetIndex, cell.getRow(), cell.getCol()), group);
+					}
 				}
 			}
 		}

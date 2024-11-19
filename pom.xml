@@ -17,8 +17,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 
-        <apache-poi.version>5.2.3</apache-poi.version>
-        <log4j.version>2.18.0</log4j.version>
+        <apache-poi.version>5.2.5</apache-poi.version>
+        <log4j.version>2.21.1</log4j.version>
     </properties>
 
 	<developers>
@@ -44,7 +44,7 @@
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-core</artifactId>
-                <version>5.8.16</version>
+                <version>5.8.32</version>
             </dependency>
 
 			<dependency>
@@ -57,70 +57,28 @@
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi</artifactId>
 				<version>${apache-poi.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-scratchpad</artifactId>
 				<version>${apache-poi.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
 			<dependency>
 				<groupId>org.apache.poi</groupId>
 				<artifactId>poi-ooxml</artifactId>
 				<version>${apache-poi.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-					</exclusion>
-				</exclusions>
 			</dependency>
 
+			<!-- Log4j-to-SLF4J bridge -->
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-api</artifactId>
+				<artifactId>log4j-to-slf4j</artifactId>
 				<version>${log4j.version}</version>
 			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-core</artifactId>
-				<version>${log4j.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.logging.log4j</groupId>
-				<artifactId>log4j-slf4j-impl</artifactId>
-				<version>${log4j.version}</version>
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-api</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.logging.log4j</groupId>
-						<artifactId>log4j-core</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-        </dependencies>
+
+		</dependencies>
     </dependencyManagement>
 
     <build>

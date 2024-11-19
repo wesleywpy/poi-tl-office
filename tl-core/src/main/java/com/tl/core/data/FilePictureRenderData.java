@@ -1,6 +1,7 @@
 package com.tl.core.data;
 
 import cn.hutool.core.io.FileUtil;
+import com.tl.core.exception.TLException;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,10 +36,8 @@ public class FilePictureRenderData implements PictureRenderData {
 			cache = Files.readAllBytes(file.toPath());
 			return cache;
 		} catch (IOException e) {
-			// TODO: 2023/12/4 输出警告日志
-			e.printStackTrace();
+			throw new TLException(e.getMessage(), e);
 		}
-		return null;
 	}
 
 	@Override
