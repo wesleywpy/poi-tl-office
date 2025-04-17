@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +29,8 @@ import java.util.Objects;
  */
 public final class WordUtil {
 	private static final String BOOKMARK_END_LABEL = "w:bookmarkEnd";
+
+	private static final String PROOF_ERR_TAG = "w:proofErr";
 
 	private WordUtil() {
 	}
@@ -98,25 +101,30 @@ public final class WordUtil {
 	 **/
 	public static List<XWPFRun> findBookmarkRuns(XWPFParagraph paragraph, CTBookmark bookmarkStart) {
 		List<XWPFRun> result = new ArrayList<>();
-		List<XWPFRun> runs = paragraph.getRuns();
+
 		Node bookmarkStartNode = bookmarkStart.getDomNode();
 		Node nextNode = bookmarkStartNode.getNextSibling();
 		List<CTMarkupRange> bookmarkEndList = paragraph.getCTP().getBookmarkEndList();
+		BigInteger startId = bookmarkStart.getId();
 
 		domBreak:
-		for (XWPFRun run : runs) {
-			if (BOOKMARK_END_LABEL.equalsIgnoreCase(nextNode.getNodeName()) && Objects.nonNull(bookmarkEndList)) {
-				for (CTMarkupRange markupRange : bookmarkEndList) {
-					Node domNode = markupRange.getDomNode();
-					if (nextNode == domNode) {
-						break domBreak;
-					}
-				}
-			}
+		for (XWPFRun run : paragraph.getRuns()) {
 			Node runNode = run.getCTR().getDomNode();
 			if (nextNode == runNode) {
 				result.add(run);
-				nextNode = nextNode.getNextSibling();
+				do {
+					nextNode = nextNode.getNextSibling();
+					if (BOOKMARK_END_LABEL.equalsIgnoreCase(nextNode.getNodeName()) && Objects.nonNull(bookmarkEndList)) {
+						for (CTMarkupRange markupRange : bookmarkEndList) {
+							Node domNode = markupRange.getDomNode();
+							if (nextNode == domNode && markupRange.getId().equals(startId)) {
+								break domBreak;
+							}
+						}
+					}
+				} while (PROOF_ERR_TAG.equalsIgnoreCase(nextNode.getNodeName())
+					|| bookmarkStartNode.getNodeName().equalsIgnoreCase(nextNode.getNodeName())
+					|| BOOKMARK_END_LABEL.equalsIgnoreCase(nextNode.getNodeName()));
 			}
 		}
 		if (result.isEmpty()) {
