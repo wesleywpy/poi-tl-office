@@ -96,7 +96,7 @@ public class ExcelResolver implements Resolver {
 					}));
 				}
 			}
-			result.addAll(resolveHf(sheet));
+			result.addAll(resolveHf(sheet, i));
 		}
 		return result;
 	}
@@ -142,20 +142,20 @@ public class ExcelResolver implements Resolver {
 	 * @author Wesley
 	 * @since 2024/01/25
 	 **/
-	private List<TemplateField> resolveHf(XSSFSheet sheet) {
+	private List<TemplateField> resolveHf(XSSFSheet sheet, int sheetIdx) {
 		List<TemplateField> result = CollUtil.newArrayList();
 		Header header = sheet.getHeader();
 		Footer footer = sheet.getFooter();
-		result.addAll(headerFooterFields(header.getLeft(), ExcelConstant.POSITION_HL));
-		result.addAll(headerFooterFields(header.getCenter(), ExcelConstant.POSITION_HC));
-		result.addAll(headerFooterFields(header.getRight(), ExcelConstant.POSITION_HR));
-		result.addAll(headerFooterFields(footer.getLeft(), ExcelConstant.POSITION_FL));
-		result.addAll(headerFooterFields(footer.getCenter(), ExcelConstant.POSITION_FC));
-		result.addAll(headerFooterFields(footer.getRight(), ExcelConstant.POSITION_FR));
+		result.addAll(headerFooterFields(header.getLeft(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_HL)));
+		result.addAll(headerFooterFields(header.getCenter(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_HC)));
+		result.addAll(headerFooterFields(header.getRight(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_HR)));
+		result.addAll(headerFooterFields(footer.getLeft(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_FL)));
+		result.addAll(headerFooterFields(footer.getCenter(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_FC)));
+		result.addAll(headerFooterFields(footer.getRight(), new ExcelLocator(sheetIdx, ExcelConstant.POSITION_FR)));
 		return result;
 	}
 
-	private List<TemplateField> headerFooterFields(String content, String hfPosition) {
+	private List<TemplateField> headerFooterFields(String content, ExcelLocator locator) {
 		if (StrUtil.isEmpty(content)) {
 			return new ArrayList<>();
 		}
@@ -163,8 +163,7 @@ public class ExcelResolver implements Resolver {
 		// 去除样式相关内容
 		final String styleRegex = "&\".*?\"";
 		String noStyleContent = content.replaceAll(styleRegex, StrUtil.EMPTY);
-		ExcelLocator excelLocator = new ExcelLocator(hfPosition);
-		return this.findFields(noStyleContent, (f) -> f.setLocation(excelLocator));
+		return this.findFields(noStyleContent, (f) -> f.setLocation(locator));
 	}
 
 	/**

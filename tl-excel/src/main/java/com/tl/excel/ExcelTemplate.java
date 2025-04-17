@@ -7,6 +7,7 @@ import com.tl.core.exception.TLException;
 import com.tl.excel.config.ExcelConfig;
 import com.tl.excel.render.CellExcelRender;
 import com.tl.excel.render.ExcelRender;
+import com.tl.excel.render.HeaderFooterRender;
 import com.tl.excel.render.NameExcelRender;
 import com.tl.excel.resolver.ExcelField;
 import com.tl.excel.resolver.ExcelResolver;
@@ -83,6 +84,7 @@ public class ExcelTemplate {
 				template.resolver = new ExcelResolver(config, excelTemplateRule);
 				template.excelRenders.add(new CellExcelRender(config, excelTemplateRule));
 				template.excelRenders.add(new NameExcelRender(config, excelTemplateRule));
+				template.excelRenders.add(new HeaderFooterRender(config, excelTemplateRule));
 				return template;
 			}
 			throw new TLException("ExcelTemplate only supports .xlsx or .xlsm format");

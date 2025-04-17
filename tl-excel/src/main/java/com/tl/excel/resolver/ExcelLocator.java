@@ -29,13 +29,14 @@ public class ExcelLocator {
 		this.cellIndex = cellIndex;
 	}
 
-	public ExcelLocator(String hfPosition) {
+	public ExcelLocator(int sheetIndex, String hfPosition) {
 		this.headerFooter = true;
+		this.sheetIndex = sheetIndex;
 		this.hfPosition = hfPosition;
 	}
 
 	@Override
 	public String toString() {
-		return this.headerFooter ? hfPosition : sheetIndex + "_" + rowIndex + "_" + cellIndex;
+		return this.headerFooter ? sheetIndex + "_" + hfPosition : sheetIndex + "_" + rowIndex + "_" + cellIndex;
 	}
 }

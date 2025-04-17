@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.tl.core.TemplateField;
 import com.tl.core.enums.TLFieldType;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -63,5 +64,7 @@ public class ExcelField implements TemplateField {
 		return fieldType;
 	}
 
-
+	public ExcelLocator getLocator() {
+		return this.location;
+	}
 }

@@ -21,4 +21,5 @@ public abstract class AbstractExcelRender implements ExcelRender{
 		this.templateRule = templateRule;
 	}
 
+
 }
