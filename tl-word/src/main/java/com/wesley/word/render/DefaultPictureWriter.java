@@ -2,6 +2,7 @@ package com.wesley.word.render;
 
 import com.tl.core.TemplateField;
 import com.tl.core.data.PictureRenderData;
+import com.tl.core.data.RenderData;
 import com.tl.core.exception.TLException;
 import com.wesley.word.util.WordUtil;
 import org.apache.poi.util.Units;
@@ -12,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 /**
@@ -21,29 +21,27 @@ import java.util.Optional;
  * @author WangPanYong
  * @since 2025/04/17
  */
-public class DefaultPicturePainter implements WordPicturePainter{
+public class DefaultPictureWriter implements WordDataWriter{
 	/**
 	 * row.getHeight的单位是1/21个点 :表示设置图片高度
 	 */
 	public static final int POINT_TO_PICTURE = 21;
 
 	@Override
-	public void add(TemplateField field, PictureRenderData picture, List<XWPFRun> runs, int width, int height) {
-		if (Objects.isNull(picture)) {
-			return;
-		}
+	public void write(TemplateField field, RenderData renderData, WordFragment fragment) {
+		if (renderData instanceof PictureRenderData picture) {
+			XWPFRun run = fragment.runs.get(0);
+			try (ByteArrayInputStream is = new ByteArrayInputStream(picture.read())) {
+				int[] weightAndHeight = parseParams(field.getParams(), is, fragment.width, fragment.height);
+				is.reset();
 
-		XWPFRun run = runs.get(0);
-		try (ByteArrayInputStream is = new ByteArrayInputStream(picture.read())) {
-			int[] weightAndHeight = parseParams(field.getParams(), is, width, height);
-			is.reset();
-
-			run.addPicture(is, picture.picType(), field.getName(), weightAndHeight[0], weightAndHeight[1]);
-		} catch (Exception e) {
-			String msg = "Word add picture failed! " + e.getMessage();
-			throw new TLException(e.getMessage(), e);
+				run.addPicture(is, picture.picType(), field.getName(), weightAndHeight[0], weightAndHeight[1]);
+			} catch (Exception e) {
+				String msg = "Word add picture failed! " + e.getMessage();
+				throw new TLException(e.getMessage(), e);
+			}
+			WordUtil.clearRun(run);
 		}
-		WordUtil.clearRun(run);
 	}
 
 	/**

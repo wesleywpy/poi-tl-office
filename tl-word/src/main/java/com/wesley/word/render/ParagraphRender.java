@@ -16,7 +16,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 /**
@@ -26,7 +25,7 @@ import java.util.stream.Collectors;
  * @since 2024/09/18
  */
 public class ParagraphRender extends AbstractWordRender{
-	private final WordPicturePainter wordPicturePainter = new DefaultPicturePainter();
+	private final WordDataWriter wordPicturePainter = new DefaultPictureWriter();
 
 	public ParagraphRender(WordConfig wordConfig, TemplateRule templateRule) {
 		super(wordConfig, templateRule);
@@ -37,8 +36,7 @@ public class ParagraphRender extends AbstractWordRender{
 		List<XWPFParagraph> paragraphs = document.getParagraphs();
 		Map<String, TemplateField> fieldMap = templateFields.stream().collect(Collectors.toMap(TemplateField::getLocation, e -> e));
 
-		var paragraphConsumer = defaultRunConsumer(dataFinder, 0, 0);
-		paragraphs.forEach(paragraph -> this.doRender(paragraph, fieldMap, paragraphConsumer));
+		paragraphs.stream().map(paragraph -> this.findFragments(paragraph, fieldMap, 0, 0)).forEach(f -> doRender(dataFinder, f));
 		document.getTables().forEach(table -> this.renderTable(table, fieldMap, dataFinder));
 
 		// 页眉页脚表格
@@ -46,7 +44,7 @@ public class ParagraphRender extends AbstractWordRender{
 		headerFooters.addAll(document.getHeaderList());
 		headerFooters.addAll(document.getFooterList());
 		for (XWPFHeaderFooter headerFooter : headerFooters) {
-			headerFooter.getParagraphs().forEach(p -> this.doRender(p, fieldMap, paragraphConsumer));
+			headerFooter.getParagraphs().stream().map(p -> this.findFragments(p, fieldMap, 0, 0)).forEach(f -> doRender(dataFinder, f));
 			headerFooter.getTables().forEach(t -> renderTable(t, fieldMap, dataFinder));
 		}
 	}
@@ -56,20 +54,23 @@ public class ParagraphRender extends AbstractWordRender{
 		for (XWPFTableRow row : rows) {
 			List<XWPFTableCell> tableCells = row.getTableCells();
 			for (XWPFTableCell tableCell : tableCells) {
-				var consumer = defaultRunConsumer(dataFinder, tableCell.getWidth(), row.getHeight());
 				for (XWPFParagraph paragraph : tableCell.getParagraphs()) {
-					doRender(paragraph, fieldMap, consumer);
+					List<WordFragment> fragments = findFragments(paragraph, fieldMap, table.getWidth(), row.getHeight());
+					doRender(dataFinder, fragments);
 				}
 			}
 		}
 	}
 
-	BiConsumer<TemplateField, List<XWPFRun>> defaultRunConsumer(RenderDataFinder dataFinder, int width, int height){
-		return (field, runs) -> {
+	void doRender(RenderDataFinder dataFinder, List<WordFragment> fragments){
+		for (WordFragment fragment : fragments) {
+			TemplateField field = fragment.field;
+			List<XWPFRun> runs = fragment.runs;
 			TLFieldType fieldType = field.getType();
+
 			if (TLFieldType.PICTURE.equals(fieldType)) {
 				PictureRenderData picture = dataFinder.findPicture(field);
-				wordPicturePainter.add(field, picture, runs, width, height);
+				wordPicturePainter.write(field, picture, fragment);
 			}else {
 				TextRenderData text = dataFinder.findText(field);
 				XWPFRun run = runs.get(0);
@@ -78,15 +79,13 @@ public class ParagraphRender extends AbstractWordRender{
 			}
 			// 清除其它run中的值
 			runs.stream().skip(1).forEach(WordUtil::clearRun);
-		};
+		}
 	}
 
-	void doRender(XWPFParagraph paragraph, Map<String, TemplateField> fieldMap, BiConsumer<TemplateField, List<XWPFRun>> consumer) {
-		if (consumer == null) {
-			return;
-		}
+	List<WordFragment> findFragments(XWPFParagraph paragraph, Map<String, TemplateField> fieldMap, int width, int height) {
 		CTP ctp = paragraph.getCTP();
 		int bookmarkSize = ctp.sizeOfBookmarkStartArray();
+		List<WordFragment> result = new ArrayList<>();
 		for (int i = 0; i < bookmarkSize; i++) {
 			CTBookmark bookmarkStart = ctp.getBookmarkStartArray(i);
 			String name = bookmarkStart.getName();
@@ -101,8 +100,12 @@ public class ParagraphRender extends AbstractWordRender{
 			if (bookmarkRuns.isEmpty()) {
 				continue;
 			}
-			consumer.accept(field, bookmarkRuns);
+			WordFragment fragment = new WordFragment(field, paragraph, bookmarkRuns);
+			fragment.width = width;
+			fragment.height = height;
+			result.add(fragment);
 		}
+		return result;
 	}
 
 

@@ -78,6 +78,34 @@ public final class WordUtil {
 	}
 
 	/**
+	 * copyRun
+	 *
+	 * @param originParagraph 原始run
+	 * @param targetParagraph 目标Run
+	 * @author Wesley
+	 * @since 2025/04/24
+	 **/
+	public static void copyParagraph(XWPFParagraph originParagraph, XWPFParagraph targetParagraph) {
+		if (Objects.isNull(originParagraph) || Objects.isNull(targetParagraph)) {
+			return;
+		}
+
+		targetParagraph.getCTP().setPPr(originParagraph.getCTP().getPPr());
+		for (XWPFRun run : originParagraph.getRuns()) {
+			XWPFRun targetRun = targetParagraph.createRun();
+			targetRun.getCTR().setRPr(run.getCTR().getRPr());
+			targetRun.setText(run.text());
+			targetRun.setColor(run.getColor());
+			targetRun.setFontFamily(run.getFontFamily());
+			Double fontSizeAsDouble = run.getFontSizeAsDouble();
+			if (Objects.nonNull(fontSizeAsDouble)) {
+				targetRun.setFontSize(fontSizeAsDouble);
+			}
+			targetRun.setCharacterSpacing(run.getCharacterSpacing());
+		}
+	}
+
+	/**
 	 * clearRun
 	 * 清除Run内容
 	 *
